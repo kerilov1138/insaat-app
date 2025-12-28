@@ -1,0 +1,39 @@
+name: Build Android APK
+on:
+
+  push:
+  workflow_dispatch:
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          
+      - name: Install Dependencies
+        run: |
+          pip install flet
+          
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+        
+      - name: Build APK
+        run: |
+          flet build apk --include-packages flet
+          
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: insaat-asistani-apk
+          path: build/apk/*.apk
